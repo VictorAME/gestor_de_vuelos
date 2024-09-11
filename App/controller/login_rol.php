@@ -1,22 +1,15 @@
 <?php
 include '../../model/config/connection.php';
-
-header('Content-Type: application/json');
 $input = file_get_contents('php://input');
 $data = json_decode($input, true);
 
-class Singup {
+class Validation {
     private $conn;
-    
+
     public function __construct($conn) {
         $this->conn = $conn;
     }
 
-    public function securityPassword($data) {
-        $data = password_hash($data, PASSWORD_BCRYPT);
-        return $data;
-    }
-    
     public function securityData($data) {
         $data = trim($data);
         $data = htmlspecialchars($data);
@@ -45,41 +38,52 @@ class Singup {
         }
     }
 
-    public function registro($data) {
+    public function login($data) {
         try {
-            if(!isset($data['nombre']) || !isset($data['apellidos']) || !isset($data['correo']) || !isset($data['contrasena'])) {
-                echo json_encode(["message" => $data]);
+            if (empty($data["email"]) || empty($data["password"])) {
+                echo json_encode(["message" => "Los parámetros están vacíos"]);
+                var_dump($data);
                 return;
             }
-
-            $query = 'INSERT INTO user (name_u, lastname_u, email_u, pass_u) VALUES (:nombre, :apellidos, :correo, :contrasena);';
-
+    
+            $query = 'SELECT * FROM user WHERE email_u = :email;';
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':nombre', $this->securityData($data['nombre']), PDO::PARAM_STR);
-            $stmt->bindParam(':apellidos', $this->securityData($data['apellidos']), PDO::PARAM_STR);
-            $stmt->bindParam(':correo', $this->securityData($data['correo']), PDO::PARAM_STR);
-            $stmt->bindParam(':contrasena', $this->securityPassword($data['contrasena']), PDO::PARAM_STR);
+            $stmt->bindParam(":email", $data["email"], PDO::PARAM_STR);
             
-            if(!$stmt->execute()) {
+            if (!$stmt->execute()) {
                 header('HTTP/1.1 400 Bad Request');
-                $response = $stmt->erroInfo();
+                $response = $stmt->errorInfo();
                 echo json_encode(["message" => $response[2]]);
-            } 
-
-            header('HTTP/1.1 200 OK');
-            echo json_encode(["message" => "Datos insertados con exito"]);
-        } catch(PDOException $error) {
-            header('HTTP/1.1 500 Interval Server Error');
+                return;
+            }
+    
+            if (intval($stmt->rowCount()) === 0) {
+                header('HTTP/1.1 404 Not Found');
+                echo json_encode(["message" => "Cuenta no encontrada"]);
+                return;
+            }
+    
+            $user = $stmt->fetch();
+            
+            if (password_verify($data["password"], $user["pass_u"])) {
+                header('HTTP/1.1 200 OK');
+                echo json_encode(["message" => "Bienvenido"]);
+            } else {
+                header('HTTP/1.1 401 Unauthorized');
+                echo json_encode(["message" => "Contraseña incorrecta"]);
+            }
+        } catch (PDOException $error) {
+            header('HTTP/1.1 500 Internal Server Error');
             echo json_encode(["message" => $error->getMessage()]);
         }
     }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $getUser = new Singup($openSQL->conn);
+    $getUser = new Validation($openSQL->conn);
     $getUser->show();
 }
 else if($_SERVER["REQUEST_METHOD"] === "POST") {
-    $singin = new Singup($openSQL->conn);
-    $singin->registro($data);
+    $val = new Validation($openSQL->conn);
+    $val->login($data);
 }

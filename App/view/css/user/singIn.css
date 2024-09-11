@@ -1,0 +1,56 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+.container-fether {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  width: 100%;
+  min-height: 100vh;
+  border: solid;
+}
+.container-header {
+  display: flex;
+  position: relative;
+  justify-items: center;
+  align-items: center;
+  height: 20vh;
+  background-image: url("../../img/aeropuerto.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  width: 100%;
+}
+
+.container-header::after {
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.55);
+  min-width: 100%;
+  min-height: 20vh;
+}
+
+.menu-header {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.container-main {
+  position: absolute;
+  display: inline;
+  justify-items: center;
+  align-items: center;
+  top: 50%;
+}
+
+.a-list {
+  color: white;
+}
+.title {
+  color: white;
+}
