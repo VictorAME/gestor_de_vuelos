@@ -33,6 +33,14 @@ const Home = () => {
       messageDiv.innerHTML = `<h1>Bienvenido, ${item.name_u}!</h1>`;
       itemsContainer.appendChild(messageDiv);
     });
+
+    async function GestorVuelos() {
+      try {
+        const response = await fetch("", {
+          method: "POST",
+        });
+      } catch (error) {}
+    }
   }
 
   endpoint();

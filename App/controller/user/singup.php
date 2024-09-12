@@ -52,7 +52,7 @@ class Singup {
                 return;
             }
 
-            $query = 'INSERT INTO user (name_u, lastname_u, email_u, pass_u) VALUES (:nombre, :apellidos, :correo, :contrasena);';
+            $query = 'INSERT INTO user (name_u, lastname_u, email_u, pass_u, role_id) VALUES (:nombre, :apellidos, :correo, :contrasena, 2);';
 
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':nombre', $this->securityData($data['nombre']), PDO::PARAM_STR);

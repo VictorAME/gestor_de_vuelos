@@ -1,77 +1,68 @@
-<?php
-include '../../model/config/connection.php';
+<?php 
+// include '../../model/config/connection.php';
+include "../model/config/connection.php";
+session_start();
 $input = file_get_contents('php://input');
-$data = json_decode($input, true);
+$user = json_decode($input, true);
 
-class Validation {
+// if (json_last_error() !== JSON_ERROR_NONE) {
+//     header('HTTP/1.1 400 Bad Request');
+//     echo json_encode(["message" => "Entrada JSON no válida"]);
+//     exit();
+// }
+
+class LoginRol {
     private $conn;
 
     public function __construct($conn) {
         $this->conn = $conn;
     }
 
-    public function securityData($data) {
-        $data = trim($data);
-        $data = htmlspecialchars($data);
-        return $data;
-    }
-
-    public function show() {
+    public function autenticacion($user) {
         try {
-            $query = 'SELECT * FROM user;';
-
-            $stmt = $this->conn->prepare($query);
-            
-            if(!$stmt->execute()) {
+            if (empty($user['email']) || empty($user['password'])) {
                 header('HTTP/1.1 400 Bad Request');
-                $response = $stmt->errorInfo();
-                echo json_encode(["message" => $response[2]]);
+                echo json_encode(["message" => "Los parámetros no deben estar vacíos"]);
+                exit();
             }
 
-            $response = $stmt->fetchAll();
-
-            header('HTTP/1.1 200 OK');
-            echo json_encode($response);
-        } catch(PDOException $error) {
-            header('HTTP/1.1 500 Interval Server Error');
-            echo json_encode(["message" => $error->getMessage()]);
-        }
-    }
-
-    public function login($data) {
-        try {
-            if (empty($data["email"]) || empty($data["password"])) {
-                echo json_encode(["message" => "Los parámetros están vacíos"]);
-                var_dump($data);
-                return;
-            }
-    
-            $query = 'SELECT * FROM user WHERE email_u = :email;';
+            $query = 'SELECT u.id, u.email_u, u.pass_u, r.role_name 
+                      FROM user u 
+                      JOIN roles r ON u.role_id = r.role_id 
+                      WHERE u.email_u = :email';
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(":email", $data["email"], PDO::PARAM_STR);
-            
+            $stmt->bindParam(':email', $user['email'], PDO::PARAM_STR);
+
             if (!$stmt->execute()) {
                 header('HTTP/1.1 400 Bad Request');
                 $response = $stmt->errorInfo();
                 echo json_encode(["message" => $response[2]]);
-                return;
+                exit();
             }
-    
+
             if (intval($stmt->rowCount()) === 0) {
                 header('HTTP/1.1 404 Not Found');
-                echo json_encode(["message" => "Cuenta no encontrada"]);
-                return;
+                echo json_encode(["message" => "No se encontró esta cuenta."]);
+                exit();
             }
-    
-            $user = $stmt->fetch();
-            
-            if (password_verify($data["password"], $user["pass_u"])) {
+
+            $pass = $stmt->fetch();
+
+            if (password_verify($user['password'], $pass['pass_u'])) {
+                $_SESSION['email'] = $pass['email_u'];
+                $_SESSION['role'] = $pass['role_name'];
+                
                 header('HTTP/1.1 200 OK');
-                echo json_encode(["message" => "Bienvenido"]);
+                if ($_SESSION['role'] === 'admin') {
+                    echo json_encode(["message" => "Eres admin"]);
+                } else {
+                    echo json_encode(["message" => "Eres usuario"]);
+                }
             } else {
                 header('HTTP/1.1 401 Unauthorized');
                 echo json_encode(["message" => "Contraseña incorrecta"]);
             }
+
         } catch (PDOException $error) {
             header('HTTP/1.1 500 Internal Server Error');
             echo json_encode(["message" => $error->getMessage()]);
@@ -79,11 +70,7 @@ class Validation {
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $getUser = new Validation($openSQL->conn);
-    $getUser->show();
-}
-else if($_SERVER["REQUEST_METHOD"] === "POST") {
-    $val = new Validation($openSQL->conn);
-    $val->login($data);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $login = new LoginRol($openSQL->conn);
+    $login->autenticacion($user);
 }

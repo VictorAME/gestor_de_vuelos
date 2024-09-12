@@ -4,7 +4,7 @@ const LongIn = () => {
   const EndPoint = async (data) => {
     try {
       const respEnd = await fetch(
-        "http://localhost/mvc/App/controller/user/login.php",
+        "http://localhost/mvc/App/controller/login_rol.php",
         {
           method: "POST",
           body: JSON.stringify(data),
@@ -36,7 +36,7 @@ const LongIn = () => {
 
     const response = await EndPoint(data);
 
-    if (response && response.message === "Bienvenido") {
+    if (response && response.message === "usuario") {
       console.log("Bienvenido");
       location.href = "../../../../html/layout/user/home/home.html";
     } else {
