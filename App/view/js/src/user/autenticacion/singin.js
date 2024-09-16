@@ -4,7 +4,7 @@ const SingIn = () => {
   const endpoint = async (setData) => {
     try {
       const respEnd = await fetch(
-        "http://localhost/mvc/App//controller/user/singup.php",
+        "http://localhost/mvc/App/model/api/usuarios.php",
         {
           method: "POST",
           headers: {
@@ -30,14 +30,18 @@ const SingIn = () => {
 
     const nombre = document.getElementById("nombre").value;
     const apellidos = document.getElementById("apellidos").value;
+    const telefono = document.getElementById("telefono").value;
     const correo = document.getElementById("correo").value;
     const contrasena = document.getElementById("contrasena").value;
+    const rol = document.getElementById("rol").value;
 
     const setData = {
       nombre: nombre,
       apellidos: apellidos,
+      telefono: telefono,
       correo: correo,
       contrasena: contrasena,
+      rol: rol,
     };
 
     console.log("Formulario enviado con los datos:", setData);

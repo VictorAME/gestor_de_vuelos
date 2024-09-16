@@ -1,106 +1,74 @@
-async function crudMostrar() {
-  try {
-    const reply = await fetch(
-      "../../../../../controller/admin/api/vuelos.php",
-      {
+function VuelosAPI() {
+  const showAll = async () => {
+    try {
+      const set = await fetch("http://localhost/mvc/App/model/api/vuelos.php", {
         method: "GET",
-      }
-    );
-    if (!reply.ok) {
-      throw new Error("Error en la conexion");
-    }
-
-    const response = await reply.json();
-    return response;
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-function crudCrear() {
-  const crear = async (data) => {
-    try {
-      const reply = await fetch(
-        "../../../../../controller/admin/api/vuelos.php",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (!reply.ok) {
-        throw new Error("Error en la conexion");
+      });
+      if (!set.ok) {
+        // Cambiar `response.ok` a `set.ok`
+        throw new Error("Error en la conexión.");
       }
 
-      const response = await reply.json();
-      return response;
+      const data = await set.json(); // Cambiar `response.json()` a `set.json()`
+      return data;
     } catch (error) {
-      console.error(error);
+      console.error("Error en la solicitud:", error);
+      return { items: [] };
     }
   };
-}
 
-function curdEliminar() {
-  const eliminar = async (id) => {
+  const create = async (data) => {
     try {
-      const reply = await fetch(
-        `../../../../../controller/admin/api/vuelos.php?vuelos_id=${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (!reply.ok) {
-        throw new Error("Error en la conexion");
+      const set = await fetch("http://localhost/mvc/App/model/api/vuelos.php", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json", // Asegurarse de que el encabezado de contenido sea JSON
+        },
+      });
+      if (!set.ok) {
+        // Cambiar `response.ok` a `set.ok`
+        throw new Error("Error en la conexión.");
       }
 
-      const response = await reply.json();
+      const response = await set.json(); // Cambiar `response.json()` a `set.json()`
       return response;
     } catch (error) {
-      console.error(error);
+      console.error("Error en la solicitud:", error);
+      return { items: [] };
     }
   };
-}
 
-function crudActualizar() {
-  const actualizar = async (id) => {
-    try {
-      const reply = await fetch(
-        `../../../../../controller/admin/api/vuelos.php?vuelos_id=${id}`,
-        {
-          method: "PUT",
-        }
-      );
-      if (!reply.ok) {
-        throw new Error("Error en la conexion");
-      }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-      const response = await reply.json();
-      return response;
-    } catch (error) {
-      console.error(error);
-    }
+    const usuarioId = document.getElementById("usuario");
+    const destino = document.getElementById("destino");
+    const origen = document.getElementById("origen");
+    const fechaIda = document.getElementById("fechaIda");
+    const fechaRegreso = document.getElementById("fechaRegreso");
+    const horaSalida = document.getElementById("horaSalida");
+    const horaLlegada = document.getElementById("horaLlegada");
+    const precio = document.getElementById("precio");
+
+    const data = {
+      usuario: usuarioId.value,
+      destino: destino.value,
+      origen: origen.value,
+      fechaIda: fechaIda.value,
+      fechaRegreso: fechaRegreso.value,
+      horaSalida: horaSalida.value,
+      horaLlegada: horaLlegada.value,
+      precio: precio.value,
+    };
+
+    const response = await create(data);
+
+    console.log(response);
   };
+
+  // Cambiar `handleSumit` a `handleSubmit`
+  document.addEventListener("DOMContentLoaded", handleSubmit);
 }
 
-// function selecionCRUD() {
-//   const selectOpcion = async () => {
-//     try {
-//       const select = document.getElementById("select").value;
-
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   };
-// }
-document.addEventListener("DOMContentLoaded", () => {
-  crudMostrar();
-  crudCrear();
-  curdEliminar();
-  crudActualizar();
-});
+VuelosAPI();
