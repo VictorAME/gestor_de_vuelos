@@ -1,30 +1,14 @@
+console.log("Estoy conectado al Js de Vuelos");
+
 function VuelosAPI() {
-  const showAll = async () => {
-    try {
-      const set = await fetch("http://localhost/mvc/App/model/api/vuelos.php", {
-        method: "GET",
-      });
-      if (!set.ok) {
-        // Cambiar `response.ok` a `set.ok`
-        throw new Error("Error en la conexión.");
-      }
-
-      const data = await set.json(); // Cambiar `response.json()` a `set.json()`
-      return data;
-    } catch (error) {
-      console.error("Error en la solicitud:", error);
-      return { items: [] };
-    }
-  };
-
   const create = async (data) => {
     try {
       const set = await fetch("http://localhost/mvc/App/model/api/vuelos.php", {
         method: "POST",
-        body: JSON.stringify(data),
         headers: {
-          "Content-Type": "application/json", // Asegurarse de que el encabezado de contenido sea JSON
+          "Content-Type": "application/json",
         },
+        body: JSON.stringify(data),
       });
       if (!set.ok) {
         // Cambiar `response.ok` a `set.ok`
@@ -35,40 +19,47 @@ function VuelosAPI() {
       return response;
     } catch (error) {
       console.error("Error en la solicitud:", error);
-      return { items: [] };
     }
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const usuarioId = document.getElementById("usuario");
-    const destino = document.getElementById("destino");
-    const origen = document.getElementById("origen");
-    const fechaIda = document.getElementById("fechaIda");
-    const fechaRegreso = document.getElementById("fechaRegreso");
-    const horaSalida = document.getElementById("horaSalida");
-    const horaLlegada = document.getElementById("horaLlegada");
-    const precio = document.getElementById("precio");
+    const usuario = document.getElementById("usuario").value;
+    const destino = document.getElementById("destino").value;
+    const origen = document.getElementById("origen").value;
+    const fechaIda = document.getElementById("fechaIda").value;
+    const fechaRegreso = document.getElementById("fechaRegreso").value;
+    const horaSalida = document.getElementById("horaSalida").value;
+    const horaLlegada = document.getElementById("horaLlegada").value;
+    const precio = document.getElementById("precio").value;
 
     const data = {
-      usuario: usuarioId.value,
-      destino: destino.value,
-      origen: origen.value,
-      fechaIda: fechaIda.value,
-      fechaRegreso: fechaRegreso.value,
-      horaSalida: horaSalida.value,
-      horaLlegada: horaLlegada.value,
-      precio: precio.value,
+      usuario: usuario,
+      destino: destino,
+      origen: origen,
+      fechaIda: fechaIda,
+      fechaRegreso: fechaRegreso,
+      horaSalida: horaSalida,
+      horaLlegada: horaLlegada,
+      precio: precio,
     };
+
+    console.log("Formulario enviado con los datos:", data);
 
     const response = await create(data);
 
-    console.log(response);
+    if (response && response.message === "Datos insertados con exito") {
+      alert("Datos insertados con exito");
+    } else {
+      console.error("Error");
+    }
   };
 
-  // Cambiar `handleSumit` a `handleSubmit`
-  document.addEventListener("DOMContentLoaded", handleSubmit);
+  const form = document.getElementById("formVuelos");
+  form.addEventListener("submit", handleSubmit);
 }
 
-VuelosAPI();
+document.addEventListener("DOMContentLoaded", () => {
+  VuelosAPI();
+});

@@ -20,13 +20,13 @@ class VuelosAPI {
                 header('HTTP/1.1 400 Bad Request');
                 $response = $stmt->errorInfo();
                 echo json_encode(["message" => $response[2]]);
-                return;
+                exit();
             }
 
             if( intval($stmt->rowCount()) === 0 ) {
-                header('HTTP/1.1 404 Not Found');
+                http_response_code(400);
                 echo json_encode(["message" => "Cuenta no encontrada"]);
-                return;
+                exit();
             }
 
             $row = $stmt->fetch();
@@ -70,11 +70,11 @@ class VuelosAPI {
 
             foreach ($rows as $row) {
                 $data["items"][] = [
-                    "id" => $row["vuelo_id"],
-                    "nombre" => $row["usuario_id"],
-                    "tipo" => $row["destino_v"],
-                    "precio" => $row["origen_v"],
-                    "disponibles" => $row["fecha_ida"],
+                    "id" => $row["vuelos_id"],
+                    "usuario" => $row["usuario_id"],
+                    "destino" => $row["destino_v"],
+                    "origen" => $row["origen_v"],
+                    "fechaIda" => $row["fecha_ida"],
                     "fechaRegreso" => $row["fecha_regreso"],
                     "horaSalida" => $row["hora_salida"],
                     "horaLlegada" => $row["hora_llegada"],
@@ -96,7 +96,7 @@ class VuelosAPI {
 
             if( !isset($insert["usuario"]) || !isset($insert["destino"]) || !isset($insert["origen"]) || !isset($insert["fechaIda"]) || !isset($insert["fechaRegreso"]) || !isset($insert["horaSalida"]) || !isset($insert["horaLlegada"]) || !isset($insert["precio"])) {
                 echo json_encode(["message" => "No hay valores en los parametros"]);
-                return;
+                exit();
             }
 
             $query = "INSERT INTO vuelos (usuario_id, destino_v, origen_v, fecha_ida, fecha_regreso, hora_salida, hora_llegada, precio) 
@@ -113,41 +113,43 @@ class VuelosAPI {
             $stmt->bindParam(":precio", $insert["precio"], PDO::PARAM_STR);
             
             if( !$stmt->execute() ) {
-                header("HTTP/1.1 400 Bad Request");
+                http_response_code(400);
                 $response = $stmt->errorInfo();
                 echo json_encode(["message" => $response[2]]);
-                return;
+                exit();
             }
 
-            header("HTTP/1.1 200 OK");
+            http_response_code(200);
             echo json_encode(["message" => "Datos insertados"]);
         } catch(PDOException $error) {
-            header("HTTP/1.1 500 Interval Server Error");
+            http_response_code(500);
             echo json_encode(["message" => $error->getMessage()]);
         }
     }
 
     public function delete($delete) {
         try {
-            if( empty($delete['id']) ) {
+            echo json_encode(["El Id es: " => $delete]);
+
+            if( empty($delete["vuelo_id"]) ) {
                 echo json_encode(["message" => "El ID no esta pasando"]);
-                return;
+                exit();
             }
 
-            $query = 'DELETE FROM vuelos WHERE boleto_id = :id;';
+            $query = 'DELETE FROM vuelos WHERE vuelos_id = :id;';
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':id', $delete['id'], PDO::PARAM_INT);
+            $stmt->bindParam(':id', $delete['vuelo_id'], PDO::PARAM_INT);
 
             if( !$stmt->execute() ) {
-                header('HTTP/1.1 400 Bad Request');
+                http_response_code(400);
                 $response = $stmt->errorInfo();
                 echo json_encode(["message" => $response[2]]);
-                return;
+                exit();
             }
 
             $row = $stmt->fetch();
 
-            $data = [
+            $delete = [
                 "id" => $row["vuelo_id"],
                 "nombre" => $row["usuario_id"],
                 "tipo" => $row["destino_v"],
@@ -160,13 +162,14 @@ class VuelosAPI {
             ];
 
             header('HTTP/1.1 200 OK');
-            echo json_encode(["items" => $delete]);
+            echo json_encode(["items" => [$delete]]);
         } catch(PDOException $error) {
-            header('HTTP/1.1 500 Interval Server Error');
+            http_response_code(500);
             echo json_encode(["message" => $error->getMessage()]);
         }
     }
 
+    //Falta hacer que funcione (Aun no se checo si funciona o no).
     public function update($update) {
         try {
             if( empty($update['name_v']) || empty($update['tipo_v']) || empty($update['precio_v']) || empty($update['disponibles_v']) ) {
@@ -218,25 +221,21 @@ class VuelosAPI {
 if( $_SERVER['REQUEST_METHOD'] === 'GET' ) {
     $getAll = new VuelosAPI($openSQL->conn);
     $getAll->show();
-}
-else if( $_SERVER['REQUEST_METHOD'] === 'POST' ) {
+} else if($_SERVER['REQUEST_METHOD'] === "POST") {
     $input = file_get_contents('php://input');
-    $data = json_decode($input, true);
+    $insert = json_decode($input, true);
 
-    echo json_encode(["input_crudo" => $input, "json_decodificado" => $data]);
+    echo json_encode(["input_crudo" => $input, "json_decodificado" => $insert]);
 
-    if (json_last_error() === JSON_ERROR_NONE && $data !== null) {
-        $setUser = new Usuarios_API($openSQL->conn);
-        $setUser->insert($data);
+    if (json_last_error() === JSON_ERROR_NONE && $insert !== null) {
+        $setUser = new VuelosAPI($openSQL->conn);
+        $setUser->insert($insert);
     } else {
         echo json_encode(["Error" => json_last_error_msg()]);
     }
-}
-else if( $_SERVER['REQUEST_METHOD'] === 'DELETE' ) {
+} else if($_SERVER["REQUEST_METHOD"] === "DELETE") {
     $delete = new VuelosAPI($openSQL->conn);
-    $delete->delete($data);
-}
-else if( $_SERVER['REQUEST_METHOD'] === 'PUT' ) {
-    $update = new VuelosAPI($openSQL->conn);
-    $update->update($data);
+    $id = isset($_GET["vuelo_id"]) ? $_GET["vuelo_id"] : null;
+
+    $delete->delete(["vuelo_id" => $id]);
 }
