@@ -9,8 +9,8 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
-    <!-- <link rel="stylesheet" type="text/css" href="../../css/user/singIn.css"> -->
-    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="../../../../css/user/autenticacion/login.css">
+    <title>Iniciar sesion</title>
   </head>
   <body>
     <div class="container-fether">
@@ -20,34 +20,30 @@
             <h1 class="title">Vamos a viajar</h1>
           <nav>
             <ul>
-              <li class="nav-list"><a class="a-list" href="../index.html">Home</a></li>
+              <li class="nav-list">
+                <a class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover" href="../../../index.html">Volver al inicio</a>
+              </li>
             </ul>
           </nav>
           </div>
         </header>
       </div>
 
-      <div class="container-main">
+      <div class="form-floating mb-3">
         <form id="loginForm">
           <table>
             <thead>
               <label><b>Inicia Secion</b></label>
             </thead>
             <tbody>
-              <tr>
-                <td><label id="id1">Usuario:</label></td>
-                <td>
-                  <span>👤</span>
-                  <input type="email" name="email" id="email" placeholder="Correo:"/>
-                </td>
-              </tr>
-              <tr>
-                <td><label>Contraseña:</label></td>
-                <td>
-                  <span></span>
-                  <input type="password" name="pass" id="password" placeholder="Contraseña:" />
-                </td>
-              </tr>
+              <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                <label for="floatingInput">Email address</label>
+              </div>
+              <div class="form-floating">
+                <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+                <label for="floatingPassword">Password</label>
+              </div>
               <tr>
                 <td>
                     <button class="btn btn-primary">Boton</button>

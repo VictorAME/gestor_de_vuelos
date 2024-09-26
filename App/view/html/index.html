@@ -22,13 +22,19 @@
 
             <nav>
               <ul>
-                <li class="nav-list"><a href="#">Flights</a></li>
-                <li class="nav-list"><a href="#">Buy</a></li>
                 <li class="nav-list">
-                  <a href="./layout/user/autenticacion/login.html">Long in</a>
+                  <a
+                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                    href="./layout/user/autenticacion/login.html"
+                    >Iniciar sesion</a
+                  >
                 </li>
                 <li class="nav-list">
-                  <a href="./layout/user/autenticacion/singup.html">Sign up</a>
+                  <a
+                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+                    href="./layout/user/autenticacion/singup.html"
+                    >Crear cuenta</a
+                  >
                 </li>
               </ul>
             </nav>
@@ -38,8 +44,8 @@
       <hr />
 
       <!-- BUSCAR VIAJES -->
-      <div>
-        <form>
+      <!-- <div>
+        <form id="formBusqueda">
           <table>
             <thead>
               <td><label>Vuelos a México</label></td>
@@ -54,7 +60,13 @@
             <tbody>
               <tr>
                 <td>
-                  <input type="search" id="" name="" placeholder="Origen" />
+                  <input
+                    type="search"
+                    id="buscarOrigen"
+                    name=""
+                    placeholder="Origen"
+                  />
+                  <ul id="listaOrigen"></ul>
                 </td>
                 <td>
                   <input
@@ -63,6 +75,7 @@
                     id="buscarDestino"
                     placeholder="Destino"
                   />
+                  <ul id="listaDestino"></ul>
                 </td>
                 <td>
                   <input type="date" name="" id="" placeholder="Fecha" />
@@ -71,30 +84,77 @@
                   <input type="date" name="" id="" placeholder="Regreso" />
                 </td>
                 <td>
-                  <input type="submit" id="" value="Buscar" />
+                  <input
+                    class="btn btn-primary"
+                    type="submit"
+                    id=""
+                    value="Buscar"
+                  />
                 </td>
               </tr>
             </tbody>
           </table>
         </form>
-      </div>
-
-      <!-- SECCION -->
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <a href="#">Hoteles</a>
-            </li>
-            <li>
-              <a href="#">Vuelos Populares</a>
-            </li>
-            <li>
-              <a href="#">Renta de casas</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
+      </div> -->
+      <form action="">
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <div class="form-floating mb-3">
+                  <input
+                    type="search"
+                    class="form-control"
+                    id="buscarOrigen"
+                    placeholder="Origen"
+                  />
+                  <label for="buscarOrigen">Origen</label>
+                </div>
+                <ul id="listaOrigen"></ul>
+              </td>
+              <td>
+                <div class="form-floating">
+                  <input
+                    type="search"
+                    class="form-control"
+                    id="buscarDestino"
+                    placeholder="Destino"
+                  />
+                  <label for="buscarDestino">Destino</label>
+                  <ul id="listaDestino"></ul>
+                </div>
+              </td>
+              <td>
+                <div class="form-floating">
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="floatingPassword"
+                    placeholder="Ida"
+                  />
+                  <label for="floatingPassword">Fecha de Ida</label>
+                </div>
+              </td>
+              <td>
+                <div class="form-floating">
+                  <input
+                    type="date"
+                    class="form-control"
+                    id="floatingPassword"
+                    placeholder="Regreso"
+                  />
+                  <label for="floatingPassword">Fecha de Regreso</label>
+                </div>
+              </td>
+              <td>
+                <div>
+                  <button class="btn btn-primary">Buscar</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
 
       <!-- PRESENTACION -->
       <div>
@@ -117,59 +177,13 @@
         </section>
       </div>
 
-      <!-- FORMULARIO -->
-      <div>
-        <form id="formularioUsuario">
-          <table>
-            <thead>
-              <tr>
-                <td>
-                  <label for="">¿Qué duda tienes?</label>
-                </td>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr>
-                <td>
-                  <input type="text" name="" id="" placeholder="Nombre:" />
-                </td>
-                <td>
-                  <input type="text" name="" id="" placeholder="Apellidos" />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <input type="text" name="" id="" placeholder="Correo" />
-                </td>
-                <td>
-                  <input type="text" name="" id="" placeholder="contraseña" />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <input
-                    type="text"
-                    name=""
-                    id=""
-                    placeholder="Escribenos tus duda..."
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <input type="submit" name="" id="" value="Enviar" />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </form>
-      </div>
-
       <!-- PIE DE PAGINA -->
       <div></div>
     </div>
-    <script type="module" src="../js/formulari/formulari.js"></script>
+
+    <footer>
+      <label for="">Pie de pagina</label>
+    </footer>
     <script
       type="module"
       src="../js/src/busquedaVuelos/busqueda_vuelos.js"

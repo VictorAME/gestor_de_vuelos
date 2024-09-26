@@ -1,5 +1,4 @@
-<?php
-require __DIR__ . '/../../../index.php';
+<?php require __DIR__ . '/../../../index.php';
 
 class Connection {
 

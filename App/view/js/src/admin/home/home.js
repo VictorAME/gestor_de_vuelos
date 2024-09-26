@@ -3,9 +3,12 @@ console.log("Estas conectado al archivo Js Home");
 function HomeAdmin() {
   const showAllVuelos = async () => {
     try {
-      const set = await fetch("http://localhost/mvc/App/model/api/vuelos.php", {
-        method: "GET",
-      });
+      const set = await fetch(
+        "http://localhost/mvc/App/model/api/admin/vuelos.php",
+        {
+          method: "GET",
+        }
+      );
       if (!set.ok) {
         throw new Error("Error en la conexión.");
       }
@@ -21,7 +24,7 @@ function HomeAdmin() {
   const deleteVuelos = async (id) => {
     try {
       const deleteVuelo = await fetch(
-        `http://localhost/mvc/App/model/api/vuelos.php?vuelo_id=${id}`,
+        `http://localhost/mvc/App/model/api/admin/vuelos.php?vuelo_id=${id}`,
         {
           method: "DELETE",
         }
@@ -41,7 +44,7 @@ function HomeAdmin() {
   const updateVuelos = async (id) => {
     try {
       const deleteVuelo = await fetch(
-        `http://localhost/mvc/App/model/api/vuelos.php?vuelo_id=${id}`,
+        `http://localhost/mvc/App/model/api/admin/vuelos.php?vuelo_id=${id}`,
         {
           method: "PUT",
         }
@@ -56,6 +59,19 @@ function HomeAdmin() {
     } catch (error) {
       console.error(error);
     }
+  };
+  const handleDeleteClick = (id) => {
+    // Mostrar el modal
+    const deleteModal = new bootstrap.Modal(
+      document.getElementById("deleteModal")
+    );
+    deleteModal.show();
+
+    // Configurar el botón de confirmación de eliminación
+    document.getElementById("confirmDelete").onclick = async () => {
+      deleteVuelos(id);
+      deleteModal.hide();
+    };
   };
 
   const handleVuelos = async (event) => {
@@ -243,20 +259,6 @@ function HomeAdmin() {
     trHead.appendChild(thPrecio);
 
     tableHead.appendChild(trHead);
-  };
-
-  const handleDeleteClick = (id) => {
-    // Mostrar el modal
-    const deleteModal = new bootstrap.Modal(
-      document.getElementById("deleteModal")
-    );
-    deleteModal.show();
-
-    // Configurar el botón de confirmación de eliminación
-    document.getElementById("confirmDelete").onclick = async () => {
-      deleteVuelos(id);
-      deleteModal.hide();
-    };
   };
 
   const handleUpdateClick = (id) => {

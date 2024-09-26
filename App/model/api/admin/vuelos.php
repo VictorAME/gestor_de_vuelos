@@ -1,6 +1,6 @@
 <?php
-include "../config/connection.php";
-header('Content-Type:application/json');
+// include "../../config/connection.php";
+include "../../config/connection.php";
 
 class VuelosAPI {
     private $conn;
@@ -23,13 +23,15 @@ class VuelosAPI {
                 exit();
             }
 
-            if( intval($stmt->rowCount()) === 0 ) {
+            if( $stmt->rowCount() === 0 ) {
                 http_response_code(400);
                 echo json_encode(["message" => "Cuenta no encontrada"]);
                 exit();
             }
 
             $row = $stmt->fetch();
+
+            (!$row) ? http_response_code(404) : http_response_code(200);
 
             $id = [
                 "id" => $row["vuelo_id"],

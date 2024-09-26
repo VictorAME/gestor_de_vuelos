@@ -1,51 +1,41 @@
-const Home = () => {
-  async function endpoint() {
-    try {
-      const response = await fetch(
-        "http://localhost/mvc/App/controller/user/login.php",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+// Solo intenta traer el nombre del usuario
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+function Menu() {
+  const ajax_get = async () => {
+    return await fetch(
+      "http://localhost/mvc/App/model/api/admin/usuarios.php",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
+    )
+      .then((res) => res.json())
+      .catch((err) => console.error(err));
+  };
 
-      const result = await response.json();
-
-      displayItems(result.items);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }
-
-  function displayItems(items) {
-    const itemsContainer = document.getElementById("items-container");
-    itemsContainer.innerHTML = "";
+  const nombreTitulo = async () => {
+    const endpoint = await ajax_get(); // Esperamos a que ajax_get se resuelva
+    const items = endpoint.items || []; // Usamos la respuesta directa como el arreglo de items
+    const titulo = document.getElementById("items-container");
+    titulo.innerHTML = "";
 
     items.forEach((item) => {
-      const messageDiv = document.createElement("div");
-      messageDiv.className = "Bienvenido-message";
-      messageDiv.innerHTML = `<h1>Bienvenido, ${item.name_u}!</h1>`;
-      itemsContainer.appendChild(messageDiv);
+      const header = document.createElement("header");
+
+      const h1 = document.createElement("h1");
+      h1.innerText = `Bienvenido "${item.nombre}"`;
+      header.appendChild(h1);
+
+      titulo.appendChild(header);
     });
+  };
 
-    async function GestorVuelos() {
-      try {
-        const response = await fetch("", {
-          method: "POST",
-        });
-      } catch (error) {}
-    }
-  }
-
-  endpoint();
-};
+  // Llamamos a nombreTitulo para mostrar los nombres
+  nombreTitulo();
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-  Home();
+  Menu();
 });

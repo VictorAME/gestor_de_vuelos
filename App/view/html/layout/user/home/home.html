@@ -8,7 +8,7 @@
   <body>
     <header>
       <div id="items-container"></div>
-      <h1>Bienvenido (Usuario)</h1>
+      <h1 class="Bienvenido-message"></h1>
 
       <form action="" id="">
         <table>
@@ -27,9 +27,6 @@
         <ul>
           <li>
             <a href="">Inicio</a>
-          </li>
-          <li>
-            <a href="">Vuelos</a>
           </li>
           <li>
             <a href="">Hoteles</a>
@@ -57,10 +54,22 @@
           <tbody>
             <tr>
               <td>
-                <input type="search" id="" name="" placeholder="Origen" />
+                <input
+                  type="search"
+                  id="buscarOrigen"
+                  name=""
+                  placeholder="Origen"
+                />
+                <ul id="listaOrigen"></ul>
               </td>
               <td>
-                <input type="search" name="" id="" placeholder="Destino" />
+                <input
+                  type="search"
+                  name=""
+                  id="buscarDestino"
+                  placeholder="Destino"
+                />
+                <ul id="listaDestino"></ul>
               </td>
               <td>
                 <input type="date" name="" id="" placeholder="Fecha" />
@@ -93,5 +102,9 @@
     </div>
 
     <script type="module" src="../../../../js/src/user/home/home.js"></script>
+    <script
+      type="module"
+      src="../../../../js/src/busquedaVuelos/busqueda_vuelos.js"
+    ></script>
   </body>
 </html>

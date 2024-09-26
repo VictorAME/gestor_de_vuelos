@@ -3,13 +3,16 @@ console.log("Estoy conectado al Js de Vuelos");
 function VuelosAPI() {
   const create = async (data) => {
     try {
-      const set = await fetch("http://localhost/mvc/App/model/api/vuelos.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      const set = await fetch(
+        "http://localhost/mvc/App/model/api/admin/vuelos.php",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
       if (!set.ok) {
         // Cambiar `response.ok` a `set.ok`
         throw new Error("Error en la conexión.");

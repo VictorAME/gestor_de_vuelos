@@ -1,6 +1,5 @@
-<?php
-include '../config/connection.php';
-header('Content-Type: application/json');
+<?php include "../../config/connection.php";
+header("Content-Type: application/json");
 
 class Usuarios_API {
     private $conn;
@@ -55,18 +54,17 @@ class Usuarios_API {
         }
     }
     
-
     public function insert($data) {
         try {
             echo json_encode(["datos recibidos" => $data]);
 
-            if(!isset($data["nombre"]) || !isset($data["apellidos"]) || !isset($data["telefono"]) || !isset($data["correo"]) || !isset($data["contrasena"]) || !isset($data["rol"])) {
+            if(!isset($data["nombre"]) || !isset($data["apellidos"]) || !isset($data["telefono"]) || !isset($data["correo"]) || !isset($data["contrasena"])) {
                 echo json_encode(["warning" => "Los parametros no estan pasando"]);
                 exit();
             }
 
             $query = "INSERT INTO usuarios (nombre_u, apellidos_u, telefono_u, email_u,contraseña, rol_id) 
-            VALUES (:nombre, :apellidos, :telefono, :correo, :contrasena, :rol);";
+            VALUES (:nombre, :apellidos, :telefono, :correo, :contrasena, 1);";
 
             $pass = $this->securityPassword($data["contrasena"]);
 
@@ -74,9 +72,8 @@ class Usuarios_API {
             $stmt->bindParam(":nombre", $data["nombre"], PDO::PARAM_STR);
             $stmt->bindParam(":apellidos", $data["apellidos"], PDO::PARAM_STR);
             $stmt->bindParam(":telefono", $data["telefono"], PDO::PARAM_STR);
-            $stmt->bindParam(":correo", $data["correo"], PDO::PARAM_STR);
             $stmt->bindParam(":contrasena", $pass, PDO::PARAM_STR);
-            $stmt->bindParam(":rol", $data["rol"], PDO::PARAM_INT);
+            $stmt->bindParam(":correo", $data["correo"], PDO::PARAM_STR);
             
             if(!$stmt->execute()) {
                 http_response_code(400);
@@ -92,6 +89,7 @@ class Usuarios_API {
             echo json_encode(["error" => $error->getMessage(), "code" => $error->getCode()]);
         }
     }
+
     public function delete($id) {
         try {
             if (empty($id)) {
@@ -135,7 +133,6 @@ class Usuarios_API {
             echo json_encode(["message" => $error->getMessage()]);
         }
     }
-    
     
     public function update($update) {
         try {
@@ -187,10 +184,14 @@ class Usuarios_API {
     }
 }
 
+/* @GET */
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $usuarios = new Usuarios_API($openSQL->conn);
     $usuarios->show();
-} else if ($_SERVER["REQUEST_METHOD"] === "POST") {
+} 
+
+/* @POST */
+else if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
 
@@ -202,11 +203,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     } else {
         echo json_encode(["Error" => json_last_error_msg()]);
     }
-} else if ($_SERVER['REQUEST_METHOD'] === "DELETE") {
+} 
+
+/* @DELETE */
+else if ($_SERVER['REQUEST_METHOD'] === "DELETE") {
     $delete = new Usuarios_API($openSQL->conn);
     $id = isset($_GET["usuario_id"]) ? $_GET["usuario_id"] : null;
     $delete->delete(["usuario_id" => $id]);
-} else if($_SERVER['REQUEST_METHOD'] === "PUT") {
+} 
+
+/* @PUT */
+else if($_SERVER['REQUEST_METHOD'] === "PUT") {
     $update = new Usuarios_API($openSQL->conn);
 
     $id = isset($_GET["usuario_id"]) ? $_GET["usuario_id"] : null;
