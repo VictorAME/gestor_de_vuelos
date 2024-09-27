@@ -1,3 +1,5 @@
 # Ignore:
 .env
-.htaccess
+composer.json
+composer.lock
+vendor
