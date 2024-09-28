@@ -4,7 +4,7 @@ function HomeAdmin() {
   const showAllVuelos = async () => {
     try {
       const set = await fetch(
-        "http://localhost/mvc/App/model/api/admin/vuelos.php",
+        "http://localhost/mvc/app/src/model/travel/flights.php",
         {
           method: "GET",
         }

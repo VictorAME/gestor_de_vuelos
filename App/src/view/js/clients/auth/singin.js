@@ -4,7 +4,7 @@ const SingIn = () => {
   const endpoint = async (setData) => {
     try {
       const respEnd = await fetch(
-        "http://localhost/mvc/App/model/api/admin/usuarios.php",
+        "http://localhost/mvc/app/src/model/clients/user.php",
         {
           method: "POST",
           headers: {

@@ -4,7 +4,7 @@ function Usuarios() {
   const endpoint = async () => {
     try {
       const response = await fetch(
-        "http://localhost/mvc/App/model/api/usuarios.php",
+        "http://localhost/mvc/app/src/model/clients/user.php",
         {
           method: "GET",
         }

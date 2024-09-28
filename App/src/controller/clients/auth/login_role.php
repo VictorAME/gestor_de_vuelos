@@ -1,72 +1,109 @@
-<?php include "../../../config/connection.php";
-session_start();
+<?php 
+namespace auth;
+
+use PDO;
+use PDOException;
+
 $input = file_get_contents('php://input');
 $user = json_decode($input, true);
 
-// if (json_last_error() !== JSON_ERROR_NONE) {
-//     header('HTTP/1.1 400 Bad Request');
-//     echo json_encode(["message" => "Entrada JSON no válida"]);
-//     exit();
-// }
+// Clase base que maneja la conexión a la base de datos
+class LoginRol 
+{
+    public $conn;
 
-class LoginRol {
-    private $conn;
-
-    public function __construct($conn) {
+    public function __construct($conn) 
+    {
         $this->conn = $conn;
     }
+}
 
-    public function autenticacion($user) {
+// Clase para clientes con rol de usuario
+class ClientUser extends LoginRol 
+{
+    public function auth(array $data): string
+    {
         try {
-            if (!isset($user['email']) || !isset($user['password'])) {
+            // Validación de datos
+            if (!isset($data["email"]) || !isset($data["password"])) {
                 http_response_code(400);
-                echo json_encode(["message" => "Los parámetros no deben estar vacíos"]);
-                exit();
+                return json_encode(["message" => "Email or password not found"]);
             }
 
-            $query = "SELECT email_u, contraseña FROM usuarios WHERE email_u = :email";
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(':email', $user['email'], PDO::PARAM_STR);
+            // Consulta SQL para el rol de usuario (rol_id = 1)
+            $sqlQuery = "SELECT email_u, contraseña FROM gestor_vuelos.usuarios WHERE email_u = :email AND rol_id = 1";
+            $stmt = $this->conn->prepare($sqlQuery);
+            $stmt->bindParam(":email", $data["email"], PDO::PARAM_STR);
 
-            if (!$stmt->execute()) {
-                http_response_code(400);
-                $response = $stmt->errorInfo();
-                echo json_encode(["message" => $response[2]]);
-                exit();
-            }
+            // Ejecutar consulta
+            if ($stmt->execute()) {
+                $user = $stmt->fetch();
 
-            if ($stmt->rowCount() === 0) {
-                http_response_code(404);
-                echo json_encode(["message" => "No se encontró esta cuenta."]);
-                exit();
-            }
-
-            $user = $stmt->fetch();
-
-            if (password_verify($user['password'], $user['contraseña'])) {
-                $_SESSION['email'] = $user['email_u'];
-                $_SESSION['role'] = $user['rol_id'];
-                
-                http_response_code(200);
-                if ($_SESSION['role'] === 2) {
-                    echo json_encode(["message" => "Eres admin"]);
-                } 
-                else if ($_SESSION['role'] === 1) {
-                    echo json_encode(["message" => "Eres usuario"]);
+                // Verificación de contraseña
+                if ($user && password_verify($data["password"], $user["contraseña"])) {
+                    http_response_code(200);
+                    return json_encode(["message" => "Welcome User"]);
+                } else {
+                    http_response_code(401);
+                    return json_encode(["message" => "Invalid credentials"]);
                 }
             } else {
-                http_response_code(401);
-                echo json_encode(["message" => "Contraseña incorrecta"]);
+                http_response_code(400);
+                $response = $stmt->errorInfo();
+                return json_encode(["message" => $response[2]]);
             }
-
         } catch (PDOException $error) {
             http_response_code(500);
-            echo json_encode(["message" => $error->getMessage()]);
+            return json_encode(["message" => $error->getMessage()]);
         }
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $login = new LoginRol($openSQL->conn);
-    $login->autenticacion($user);
+// Clase para clientes con rol de administrador
+class ClientAdmin extends LoginRol 
+{
+    public function auth(array $data): string
+    {
+        try {
+            // Validación de datos
+            if (!isset($data["email"]) || !isset($data["password"])) {
+                http_response_code(400);
+                return json_encode(["message" => "Email or password not found"]);
+            }
+
+            // Consulta SQL para el rol de administrador (rol_id = 2)
+            $sqlQuery = "SELECT email_u, contraseña FROM gestor_vuelos.usuarios WHERE email_u = :email AND rol_id = 2";
+            $stmt = $this->conn->prepare($sqlQuery);
+            $stmt->bindParam(":email", $data["email"], PDO::PARAM_STR);
+
+            // Ejecutar consulta
+            if ($stmt->execute()) {
+                $admin = $stmt->fetch();
+
+                // Verificación de contraseña
+                if ($admin && password_verify($data["password"], $admin["contraseña"])) {
+                    http_response_code(200);
+                    return json_encode(["message" => "Welcome Admin"]);
+                } else {
+                    http_response_code(401);
+                    return json_encode(["message" => "Invalid credentials"]);
+                }
+            } else {
+                http_response_code(400);
+                $response = $stmt->errorInfo();
+                return json_encode(["message" => $response[2]]);
+            }
+        } catch (PDOException $error) {
+            http_response_code(500);
+            return json_encode(["message" => $error->getMessage()]);
+        }
+    }
+}
+
+if(isset($user["role"]) && $user["role"] === "Admin") {
+    $admin = new ClientAdmin($conn);
+    echo $admin->auth($user);
+} else {
+    $client = new ClientUser($conn);
+    echo $client->auth($user);
 }

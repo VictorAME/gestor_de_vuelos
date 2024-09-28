@@ -1,10 +1,10 @@
-console.log("Esta conectado el JavaScript");
+console.log("Esta conectado el Login");
 
 const LongIn = () => {
   const EndPoint = async (data) => {
     try {
       const respEnd = await fetch(
-        "http://localhost/mvc/App/controller/login_rol.php",
+        "http://localhost/mvc/app/src/controller/clients/auth/login_role.php",
         {
           method: "POST",
           body: JSON.stringify(data),

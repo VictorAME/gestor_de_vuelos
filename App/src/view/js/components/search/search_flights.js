@@ -3,7 +3,7 @@ console.log("Estas en el archivo Buscar Vuelos");
 function buscador_vuelos() {
   const ajax_get = async () => {
     return await fetch(
-      "http://localhost/mvc/App/controller/admin/buscadorVuelos/buscador.php",
+      "http://localhost/mvc/app/src/controller/clients/search/search_flights.php",
       {
         method: "POST",
         headers: {

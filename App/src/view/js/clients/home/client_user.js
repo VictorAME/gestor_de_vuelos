@@ -2,15 +2,12 @@
 
 function Menu() {
   const ajax_get = async () => {
-    return await fetch(
-      "http://localhost/mvc/App/model/api/admin/usuarios.php",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
+    return await fetch("http://localhost/mvc/app/src/model/clients/user.php", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
       .then((res) => res.json())
       .catch((err) => console.error(err));
   };

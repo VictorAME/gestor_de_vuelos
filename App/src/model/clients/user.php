@@ -1,7 +1,7 @@
-<?php include "../../config/connection.php";
+<?php
 header("Content-Type: application/json");
 
-class Usuarios_API {
+final class Usuarios_API {
     private $conn;
     
     public function __construct($conn) {
@@ -18,7 +18,7 @@ class Usuarios_API {
         return $data;
     }
 
-    public function show() {
+    public function show():void {
         try {
             $query = 'SELECT * FROM usuarios;';
             $stmt = $this->conn->prepare($query);
@@ -185,48 +185,48 @@ class Usuarios_API {
 }
 
 /* @GET */
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $usuarios = new Usuarios_API($openSQL->conn);
-    $usuarios->show();
-} 
+// if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+//     $usuarios = new Usuarios_API($openSQL->conn);
+//     $usuarios->show();
+// } 
 
 /* @POST */
-else if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $input = file_get_contents('php://input');
-    $data = json_decode($input, true);
+// else if ($_SERVER["REQUEST_METHOD"] === "POST") {
+//     $input = file_get_contents('php://input');
+//     $data = json_decode($input, true);
 
-    echo json_encode(["input_crudo" => $input, "json_decodificado" => $data]);
+//     echo json_encode(["input_crudo" => $input, "json_decodificado" => $data]);
 
-    if (json_last_error() === JSON_ERROR_NONE && $data !== null) {
-        $singin = new Usuarios_API($openSQL->conn);
-        $singin->insert($data);
-    } else {
-        echo json_encode(["Error" => json_last_error_msg()]);
-    }
-} 
+//     if (json_last_error() === JSON_ERROR_NONE && $data !== null) {
+//         $singin = new Usuarios_API($openSQL->conn);
+//         $singin->insert($data);
+//     } else {
+//         echo json_encode(["Error" => json_last_error_msg()]);
+//     }
+// } 
 
 /* @DELETE */
-else if ($_SERVER['REQUEST_METHOD'] === "DELETE") {
-    $delete = new Usuarios_API($openSQL->conn);
-    $id = isset($_GET["usuario_id"]) ? $_GET["usuario_id"] : null;
-    $delete->delete(["usuario_id" => $id]);
-} 
+// else if ($_SERVER['REQUEST_METHOD'] === "DELETE") {
+//     $delete = new Usuarios_API($openSQL->conn);
+//     $id = isset($_GET["usuario_id"]) ? $_GET["usuario_id"] : null;
+//     $delete->delete(["usuario_id" => $id]);
+// } 
 
 /* @PUT */
-else if($_SERVER['REQUEST_METHOD'] === "PUT") {
-    $update = new Usuarios_API($openSQL->conn);
+// else if($_SERVER['REQUEST_METHOD'] === "PUT") {
+//     $update = new Usuarios_API($openSQL->conn);
 
-    $id = isset($_GET["usuario_id"]) ? $_GET["usuario_id"] : null;
-    $nombre = isset($_GET["nombre_u"]) ? $_GET["nombre_u"] : null;
-    $apellidos = isset($_GET["apellidos_u"]) ? $_GET["apellidos_u"] : null;
-    $telefono = isset($_GET["telefono_u"]) ? $_GET["telefono_u"] : null;
-    $correo = isset($_GET["email_u"]) ? $_GET["email_u"] : null;
+//     $id = isset($_GET["usuario_id"]) ? $_GET["usuario_id"] : null;
+//     $nombre = isset($_GET["nombre_u"]) ? $_GET["nombre_u"] : null;
+//     $apellidos = isset($_GET["apellidos_u"]) ? $_GET["apellidos_u"] : null;
+//     $telefono = isset($_GET["telefono_u"]) ? $_GET["telefono_u"] : null;
+//     $correo = isset($_GET["email_u"]) ? $_GET["email_u"] : null;
 
-    $update->update([
-        "usuario_id" => $id,
-        "nombre_u" => $nombre,
-        "apellidos_u" => $apellidos,
-        "telefono_u" => $telefono,
-        "email_u" => $correo
-    ]);
-}
+//     $update->update([
+//         "usuario_id" => $id,
+//         "nombre_u" => $nombre,
+//         "apellidos_u" => $apellidos,
+//         "telefono_u" => $telefono,
+//         "email_u" => $correo
+//     ]);
+// }
