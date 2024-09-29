@@ -1,8 +1,4 @@
-<?php 
-namespace App\src\config;
-
-use PDO;
-use PDOException;
+<?php require __DIR__."../../../../index.php";
 
 class Connection {
 
@@ -35,6 +31,11 @@ class Connection {
         }
     }
 }
+
+$user = $_ENV["ENV_CONFIG_USERNAME"];
+$pass = $_ENV["ENV_CONFIG_PASSWORD"];
+$host = $_ENV["ENV_CONFIG_HOST"];
+$db   = $_ENV["ENV_CONFIG_DATABASE"];
 
 $openSQL = new Connection($user, $pass, $host, $db);
 $openSQL->openSQL_PDO();

@@ -3,17 +3,52 @@ console.log("Esta conectado el Login");
 const LongIn = () => {
   const EndPoint = async (data) => {
     try {
-      const respEnd = await fetch(
+      return await fetch(
         "http://localhost/mvc/app/src/controller/clients/auth/login_role.php",
         {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify(data),
         }
       )
-        .then((resp) => resp.json())
-        .catch((error) => console.error(error));
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error en la solicitud");
+          }
+          return response.json();
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const getClient = async () => {
+    try {
+      return await fetch(
+        "http://localhost/mvc/app/src/model/clients/user.php",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error en la solicitud");
+          }
+          return response.json();
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
+    } catch (error) {
+      throw new Error("Error: ", error);
     }
   };
 
@@ -30,17 +65,18 @@ const LongIn = () => {
     };
 
     const response = await EndPoint(data);
+    const client = await getClient();
+    const items = client.items || [];
 
-    if (response && response.message === "Eres admin") {
-      console.log("Bienvenido Admin");
-      location.href = "../../../../html/layout/admin/home/home.html";
-    } else if (response && response.message === "Eres usuario") {
-      console.log("Bienvenido Usuario");
-      location.href = "../../../../html/layout/user/home/home.html";
-    } else {
-      console.log("Contraseña incorrecta o correo electronico");
-    }
-    console.log(response);
+    items.forEach((item) => {
+      if (response && response.message === "Welcome User") {
+        alert("Bienvenido " + item.nombre);
+        location.href = "../../../html/clients/home/client_user_home.html";
+      } else if (response && response.message === "Welcome Admin") {
+        alert("Bienvenido " + item.nombre);
+        location.href = "../../../html/clients/home/client_user_home.html";
+      }
+    });
   };
 
   const form = document.getElementById("loginForm");

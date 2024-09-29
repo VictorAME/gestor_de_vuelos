@@ -115,7 +115,7 @@ function Usuarios() {
       ####################################################
       */
       const imgDelete = document.createElement("img");
-      imgDelete.src = "../../../../img/admin/usuario_iconos/basura.png";
+      imgDelete.src = "../../img/admin/usuario_iconos/basura.png";
       imgDelete.alt = "Eliminar"; // Texto alternativo para la accesibilidad
 
       const tdDelete = document.createElement("button");
@@ -137,7 +137,7 @@ function Usuarios() {
       ####################################################
       */
       const imgUpdate = document.createElement("img");
-      imgUpdate.src = "../../../../img/admin/usuario_iconos/lapiz.png";
+      imgUpdate.src = "../../img/admin/usuario_iconos/lapiz.png";
       imgUpdate.alt = "Actualizar"; // Texto alternativo para la accesibilidad
 
       const tdUpdate = document.createElement("button");

@@ -1,4 +1,4 @@
-<?php
+<?php require __DIR__."../../../config/connection.php";
 header("Content-Type: application/json");
 
 final class Usuarios_API {
@@ -8,20 +8,17 @@ final class Usuarios_API {
         $this->conn = $conn;
     }
 
-    public function securityPassword($data) {
+    public function passwordHash($data):string {
         return password_hash($data, PASSWORD_BCRYPT);
     }
     
-    public function securityData($data) {
-        $data = trim($data);
-        $data = htmlspecialchars($data);
-        return $data;
+    public function cleanInput($data):string {
+        return htmlspecialchars(trim($data), ENT_QUOTES, "UTF-8");
     }
 
     public function show():void {
         try {
-            $query = 'SELECT * FROM usuarios;';
-            $stmt = $this->conn->prepare($query);
+            $stmt = $this->conn->prepare("SELECT * FROM gestor_vuelos.client;");
     
             if (!$stmt->execute()) {
                 http_response_code(400);
@@ -36,69 +33,66 @@ final class Usuarios_API {
 
             foreach ($rows as $row) {
                 $data["items"][] = [
-                    "id" => $row["usuario_id"],
-                    "nombre" => $row["nombre_u"],
-                    "apellidos" => $row["apellidos_u"],
-                    "telefono" => $row["telefono_u"],
+                    "id" => $row["user_id"],
+                    "nombre" => $row["name"],
+                    "apellidos" => $row["lastname"],
+                    "telefono" => $row["phone"],
                     "correo" => $row["email_u"],
-                    "contraseña" => $row["contraseña"],
-                    "rol" => $row["rol_id"],
+                    "contraseña" => $row["password"],
+                    "rol" => $row["role_id"],
                 ];
             }
+
             http_response_code(200);
             echo json_encode($data);
         } catch (PDOException $error) {
-            // Manejar excepciones y errores de la base de datos
             http_response_code(500);
             echo json_encode(["error" => $error->getMessage()]);
         }
     }
     
-    public function insert($data) {
+    public function insert($data):string 
+    {
         try {
             echo json_encode(["datos recibidos" => $data]);
 
-            if(!isset($data["nombre"]) || !isset($data["apellidos"]) || !isset($data["telefono"]) || !isset($data["correo"]) || !isset($data["contrasena"])) {
+            if(!isset($data["name"]) || !isset($data["lastname"]) || !isset($data["phone"]) || !isset($data["email"]) || !isset($data["password"])) {
                 echo json_encode(["warning" => "Los parametros no estan pasando"]);
-                exit();
             }
 
-            $query = "INSERT INTO usuarios (nombre_u, apellidos_u, telefono_u, email_u,contraseña, rol_id) 
-            VALUES (:nombre, :apellidos, :telefono, :correo, :contrasena, 1);";
+            $pass = $this->passwordHash($data["password"]);
 
-            $pass = $this->securityPassword($data["contrasena"]);
+            $stmt = $this->conn->prepare("INSERT INTO gestor_vuelos.client (name, lastname, phone, email, password, role_id) 
+            VALUES (:name, :lastname, :phone, :email, :password, 1);");
 
-            $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(":nombre", $data["nombre"], PDO::PARAM_STR);
-            $stmt->bindParam(":apellidos", $data["apellidos"], PDO::PARAM_STR);
-            $stmt->bindParam(":telefono", $data["telefono"], PDO::PARAM_STR);
-            $stmt->bindParam(":contrasena", $pass, PDO::PARAM_STR);
-            $stmt->bindParam(":correo", $data["correo"], PDO::PARAM_STR);
+            $stmt->bindParam(":name", $this->cleanInput($data["name"]), PDO::PARAM_STR);
+            $stmt->bindParam(":lastname", $this->cleanInput($data["lastname"]), PDO::PARAM_STR);
+            $stmt->bindParam(":phone", $this->cleanInput($data["phone"]), PDO::PARAM_STR);
+            $stmt->bindParam(":password", $pass, PDO::PARAM_STR);
+            $stmt->bindParam(":email", $this->cleanInput($data["email"]), PDO::PARAM_STR);
             
             if(!$stmt->execute()) {
                 http_response_code(400);
                 $response = $stmt->errorInfo();
-                echo json_encode(["warning" => $response[2]]);
-                exit();
-            } else {
-                http_response_code(200);
-                echo json_encode(["message" => "Datos insertados con exito"]);
-            }
+                return json_encode(["warning" => $response[2]]);
+            } 
+            
+            http_response_code(200);
+            return "Datos insertados con exito";
         } catch(PDOException $error) {
             http_response_code(500);
-            echo json_encode(["error" => $error->getMessage(), "code" => $error->getCode()]);
+            return json_encode(["error" => $error->getMessage(), "code" => $error->getCode()]);
         }
     }
 
-    public function delete($id) {
+    public function delete($id):string {
         try {
             if (empty($id)) {
                 echo json_encode(["warning" => "El ID no está pasando o no es válido."]);
                 exit();
             }
-    
-            $query = 'DELETE FROM usuarios WHERE usuario_id = :usuario_id;';
-            $stmt = $this->conn->prepare($query);
+            
+            $stmt = $this->conn->prepare("DELETE FROM gestor_vuelos.client WHERE user_id = :usuario_id;");
             $stmt->bindParam(':usuario_id', $id["usuario_id"], PDO::PARAM_INT);
     
             if (!$stmt->execute()) {
@@ -107,34 +101,16 @@ final class Usuarios_API {
                 echo json_encode(["message" => $response[2]]);
                 exit();
             }
-    
-            if ($stmt->rowCount() === 0) {
-                http_response_code(404);
-                echo json_encode(["message" => "Cuenta no encontrada."]);
-                exit();
-            }
-            
-            $row = $stmt->fetch();
 
-            $id = [
-                "id" => $row["usuario_id"],
-                "nombre" => $row["nombre_u"],
-                "apellidos" => $row["apellidos_u"],
-                "telefono" => $row["telefono_u"],
-                "correo" => $row["email_u"],
-                "contraseña" => $row["contraseña"],
-                "rol" => $row["rol_id"],
-            ];
-
-            http_response_code(200);
-            echo json_encode(["items" => [$id]]);
+            http_response_code(200); 
+            return json_encode(["message" => "User delete"]);
         } catch (PDOException $error) {
             http_response_code(500);
             echo json_encode(["message" => $error->getMessage()]);
         }
     }
     
-    public function update($update) {
+    public function update($update):string {
         try {
             echo json_encode(["datos recibidos" => $update]);
 
@@ -142,14 +118,13 @@ final class Usuarios_API {
                 echo json_encode(["warning" => "Los parametros no estan pasando"]);
                 exit();
             }
-    
-            $query = 'UPDATE usuarios SET nombre_u = :nombre_u,
+
+            $stmt = $this->conn->prepare("UPDATE usuarios SET nombre_u = :nombre_u,
             apellidos_u = :apellidos_u,
             telefono_u = :telefono_u,
             email_u = :email_u
-            WHERE usuario_id = :usuario_id';
+            WHERE usuario_id = :usuario_id;");
 
-            $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':nombre_u', $update['nombre_u'], PDO::PARAM_STR);
             $stmt->bindParam(':apellidos_u', $update['apellidos_u'], PDO::PARAM_STR);
             $stmt->bindParam(':telefono_u', $update['telefono_u'], PDO::PARAM_STR);
@@ -162,9 +137,9 @@ final class Usuarios_API {
                 echo json_encode(["message" => $response[2]]);
                 exit();
             }
-    
+
             $row = $stmt->fetch();
-    
+            
             $update = [
                 "id" => $row["usuario_id"],
                 "nombre" => $row["nombre_u"],
@@ -174,9 +149,9 @@ final class Usuarios_API {
                 "contraseña" => $row["contraseña"],
                 "rol" => $row["rol_id"],
             ];
-    
+
             http_response_code(200);
-            echo json_encode(["items" => [$update]]);
+            return json_encode(["message" => "User updating"]);
         } catch(PDOException $error) {
             http_response_code(500);
             echo json_encode(["message" => $error->getMessage()]);
@@ -185,48 +160,48 @@ final class Usuarios_API {
 }
 
 /* @GET */
-// if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-//     $usuarios = new Usuarios_API($openSQL->conn);
-//     $usuarios->show();
-// } 
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $usuarios = new Usuarios_API($openSQL->conn);
+    $usuarios->show();
+} 
 
 /* @POST */
-// else if ($_SERVER["REQUEST_METHOD"] === "POST") {
-//     $input = file_get_contents('php://input');
-//     $data = json_decode($input, true);
+else if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $input = file_get_contents('php://input');
+    $data = json_decode($input, true);
 
-//     echo json_encode(["input_crudo" => $input, "json_decodificado" => $data]);
+    echo json_encode(["input_crudo" => $input, "json_decodificado" => $data]);
 
-//     if (json_last_error() === JSON_ERROR_NONE && $data !== null) {
-//         $singin = new Usuarios_API($openSQL->conn);
-//         $singin->insert($data);
-//     } else {
-//         echo json_encode(["Error" => json_last_error_msg()]);
-//     }
-// } 
+    if (json_last_error() === JSON_ERROR_NONE && $data !== null) {
+        $singin = new Usuarios_API($openSQL->conn);
+        $singin->insert($data);
+    } else {
+        echo json_encode(["Error" => json_last_error_msg()]);
+    }
+} 
 
 /* @DELETE */
-// else if ($_SERVER['REQUEST_METHOD'] === "DELETE") {
-//     $delete = new Usuarios_API($openSQL->conn);
-//     $id = isset($_GET["usuario_id"]) ? $_GET["usuario_id"] : null;
-//     $delete->delete(["usuario_id" => $id]);
-// } 
+else if ($_SERVER['REQUEST_METHOD'] === "DELETE") {
+    $delete = new Usuarios_API($openSQL->conn);
+    $id = isset($_GET["usuario_id"]) ? $_GET["usuario_id"] : null;
+    $delete->delete(["usuario_id" => $id]);
+} 
 
 /* @PUT */
-// else if($_SERVER['REQUEST_METHOD'] === "PUT") {
-//     $update = new Usuarios_API($openSQL->conn);
+else if($_SERVER['REQUEST_METHOD'] === "PUT") {
+    $update = new Usuarios_API($openSQL->conn);
 
-//     $id = isset($_GET["usuario_id"]) ? $_GET["usuario_id"] : null;
-//     $nombre = isset($_GET["nombre_u"]) ? $_GET["nombre_u"] : null;
-//     $apellidos = isset($_GET["apellidos_u"]) ? $_GET["apellidos_u"] : null;
-//     $telefono = isset($_GET["telefono_u"]) ? $_GET["telefono_u"] : null;
-//     $correo = isset($_GET["email_u"]) ? $_GET["email_u"] : null;
+    $id = isset($_GET["usuario_id"]) ? $_GET["usuario_id"] : null;
+    $nombre = isset($_GET["nombre_u"]) ? $_GET["nombre_u"] : null;
+    $apellidos = isset($_GET["apellidos_u"]) ? $_GET["apellidos_u"] : null;
+    $telefono = isset($_GET["telefono_u"]) ? $_GET["telefono_u"] : null;
+    $correo = isset($_GET["email_u"]) ? $_GET["email_u"] : null;
 
-//     $update->update([
-//         "usuario_id" => $id,
-//         "nombre_u" => $nombre,
-//         "apellidos_u" => $apellidos,
-//         "telefono_u" => $telefono,
-//         "email_u" => $correo
-//     ]);
-// }
+    $update->update([
+        "usuario_id" => $id,
+        "nombre_u" => $nombre,
+        "apellidos_u" => $apellidos,
+        "telefono_u" => $telefono,
+        "email_u" => $correo
+    ]);
+}
