@@ -26,7 +26,7 @@ final class Usuarios_API {
                 echo json_encode(["warning" => $response[2]]);
                 exit();
             }
-    
+            
             $rows = $stmt->fetchAll();
 
             $data = ["items" => []];
@@ -42,7 +42,6 @@ final class Usuarios_API {
                     "rol" => $row["role_id"],
                 ];
             }
-
             http_response_code(200);
             echo json_encode($data);
         } catch (PDOException $error) {
@@ -51,37 +50,41 @@ final class Usuarios_API {
         }
     }
     
-    public function insert($data):string 
+    public function insert($data):void 
     {
         try {
-            echo json_encode(["datos recibidos" => $data]);
-
             if(!isset($data["name"]) || !isset($data["lastname"]) || !isset($data["phone"]) || !isset($data["email"]) || !isset($data["password"])) {
-                echo json_encode(["warning" => "Los parametros no estan pasando"]);
+                echo json_encode(["message" => "Los parametros no estan pasando"]);
+                exit;
             }
 
+            $name = $this->cleanInput($data["name"]);
+            $lastname = $this->cleanInput($data["lastname"]);
+            $phone = $this->cleanInput($data["phone"]);
+            $email = $this->cleanInput($data["email"]);
             $pass = $this->passwordHash($data["password"]);
 
-            $stmt = $this->conn->prepare("INSERT INTO gestor_vuelos.client (name, lastname, phone, email, password, role_id) 
-            VALUES (:name, :lastname, :phone, :email, :password, 1);");
+            $stmt = $this->conn->prepare("INSERT INTO gestor_vuelos.client (name, lastname, phone, email_u, password, role_id) 
+            VALUES (:name, :lastname, :phone, :email, :password, 2);");
 
-            $stmt->bindParam(":name", $this->cleanInput($data["name"]), PDO::PARAM_STR);
-            $stmt->bindParam(":lastname", $this->cleanInput($data["lastname"]), PDO::PARAM_STR);
-            $stmt->bindParam(":phone", $this->cleanInput($data["phone"]), PDO::PARAM_STR);
+            $stmt->bindParam(":name", $name, PDO::PARAM_STR);
+            $stmt->bindParam(":lastname", $lastname, PDO::PARAM_STR);
+            $stmt->bindParam(":phone", $phone, PDO::PARAM_STR);
+            $stmt->bindParam(":email", $email, PDO::PARAM_STR);
             $stmt->bindParam(":password", $pass, PDO::PARAM_STR);
-            $stmt->bindParam(":email", $this->cleanInput($data["email"]), PDO::PARAM_STR);
             
             if(!$stmt->execute()) {
                 http_response_code(400);
                 $response = $stmt->errorInfo();
-                return json_encode(["warning" => $response[2]]);
+                echo json_encode(["message" => $response[2]]);
+                exit;
             } 
             
             http_response_code(200);
-            return "Datos insertados con exito";
+            echo json_encode(["message" => "Datos insertados con exito"]);
         } catch(PDOException $error) {
             http_response_code(500);
-            return json_encode(["error" => $error->getMessage(), "code" => $error->getCode()]);
+            echo json_encode(["message" => $error->getMessage()]);
         }
     }
 
@@ -169,14 +172,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 else if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $input = file_get_contents('php://input');
     $data = json_decode($input, true);
-
-    echo json_encode(["input_crudo" => $input, "json_decodificado" => $data]);
-
-    if (json_last_error() === JSON_ERROR_NONE && $data !== null) {
+    
+    if (json_last_error() === JSON_ERROR_NONE) {
         $singin = new Usuarios_API($openSQL->conn);
         $singin->insert($data);
     } else {
+        http_response_code(400);
         echo json_encode(["Error" => json_last_error_msg()]);
+        exit;
     }
 } 
 

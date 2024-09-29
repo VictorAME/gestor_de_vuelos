@@ -18,29 +18,25 @@ class BuscadorVuelos {
             if(!isset($search["destino"])) {
                 http_response_code(400);
                 echo json_encode(["message" => "Los parámetros no son correctos"]);
-                exit();
+                exit;
             }
     
-            $query = "SELECT destino, origen, vuelos_id, usuario_id, fecha_ida, fecha_regreso, hora_salida, hora_llegada, precio 
-                      FROM gestor_vuelos.vuelos 
-                      WHERE destino LIKE :destino";
-    
+            $stmt = $this->conn->prepare("SELECT * FROM gestor_vuelos.vuelos 
+                      WHERE destino LIKE :destino");
+
             $destino = "%" . $this->securityData($search["destino"]) . "%";
-            $stmt = $this->conn->prepare($query);
             $stmt->bindParam(":destino", $destino, PDO::PARAM_STR);
     
             // Ejecutar la consulta
             if(!$stmt->execute()) {
+                http_response_code(400);
                 $response = $stmt->errorInfo();
                 echo json_encode(["error" => $response[2]]);
-                http_response_code(500);
-                exit();
+                exit;
             }
     
             // Verificar si se encontró algún resultado
             $row = $stmt->fetch();
-            
-            (!$row) ? http_response_code(404) : http_response_code(200);
     
             // Crear el array de resultados
             $search = [

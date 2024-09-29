@@ -70,11 +70,9 @@ const LongIn = () => {
 
     items.forEach((item) => {
       if (response && response.message === "Welcome User") {
-        alert("Bienvenido " + item.nombre);
         location.href = "../../../html/clients/home/client_user_home.html";
       } else if (response && response.message === "Welcome Admin") {
-        alert("Bienvenido " + item.nombre);
-        location.href = "../../../html/clients/home/client_user_home.html";
+        location.href = "../../../html/clients/home/client_admin_home.html";
       }
     });
   };

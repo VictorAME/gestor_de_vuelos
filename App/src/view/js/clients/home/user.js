@@ -1,13 +1,16 @@
-// Solo intenta traer el nombre del usuario
+console.log("Estas en el JS de Home");
 
 function Menu() {
   const ajax_get = async () => {
-    return await fetch("http://localhost/mvc/app/src/model/clients/user.php", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    return await fetch(
+      "http://localhost/mvc/app/src/controller/clients/auth/login_role.php",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
       .then((res) => res.json())
       .catch((err) => console.error(err));
   };
@@ -18,15 +21,15 @@ function Menu() {
     const titulo = document.getElementById("items-container");
     titulo.innerHTML = "";
 
-    items.forEach((item) => {
-      const header = document.createElement("header");
+    // items.map((item) => {
+    const header = document.createElement("header");
 
-      const h1 = document.createElement("h1");
-      h1.innerText = `Bienvenido "${item.nombre}"`;
-      header.appendChild(h1);
+    const h1 = document.createElement("h1");
+    h1.innerText = `Hola ${endpoint.username} ¿A donde quieres ir?`;
+    header.appendChild(h1);
 
-      titulo.appendChild(header);
-    });
+    titulo.appendChild(header);
+    // });
   };
 
   // Llamamos a nombreTitulo para mostrar los nombres

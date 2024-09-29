@@ -3,7 +3,7 @@ console.log("El archivo singin.js está cargado y ejecutándose.");
 const SingIn = () => {
   const endpoint = async (setData) => {
     try {
-      const respEnd = await fetch(
+      return await fetch(
         "http://localhost/mvc/app/src/model/clients/user.php",
         {
           method: "POST",
@@ -12,14 +12,16 @@ const SingIn = () => {
           },
           body: JSON.stringify(setData),
         }
-      );
-
-      if (!respEnd.ok) {
-        throw new Error("Error en el EndPoint");
-      }
-
-      const response = await respEnd.json();
-      return response;
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error en la solicitud");
+          }
+          return response.json();
+        })
+        .catch((error) => {
+          console.error("Error:", error.message);
+        });
     } catch (error) {
       console.error("Error: ", error);
     }
@@ -28,37 +30,32 @@ const SingIn = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const nombre = document.getElementById("nombre").value;
-    const apellidos = document.getElementById("apellidos").value;
-    const telefono = document.getElementById("telefono").value;
-    const correo = document.getElementById("correo").value;
-    const contrasena = document.getElementById("contrasena").value;
+    const name = document.getElementById("name").value;
+    const lastname = document.getElementById("lastname").value;
+    const phone = document.getElementById("phone").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
     const setData = {
-      nombre: nombre,
-      apellidos: apellidos,
-      telefono: telefono,
-      correo: correo,
-      contrasena: contrasena,
+      name: name,
+      lastname: lastname,
+      phone: phone,
+      email: email,
+      password: password,
     };
 
     console.log("Formulario enviado con los datos:", setData);
 
     const response = await endpoint(setData);
 
-    // console.log(response);
-
     if (response && response.message === "Datos insertados con exito") {
       alert("Datos insertados con exito");
-    } else {
-      console.error("Error");
+      location.href = "../../../html/clients/auth/login_role.html";
     }
   };
 
   const form = document.getElementById("signupForm");
-  form.addEventListener("submit", handleSubmit, () => {
-    window.location.href = "../../../../html/user/autenticacion/login.html";
-  });
+  form.addEventListener("submit", handleSubmit);
 };
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -8,7 +8,6 @@
   <body>
     <header>
       <div id="items-container"></div>
-      <h1 class="Bienvenido-message"></h1>
 
       <form action="" id="">
         <table>
@@ -26,13 +25,10 @@
       <nav id="navBarMenu">
         <ul>
           <li>
-            <a href="">Inicio</a>
-          </li>
-          <li>
             <a href="">Hoteles</a>
           </li>
           <li>
-            <a href="">Perfil</a>
+            <a href="../profile/client_user_profile.html">Perfil</a>
           </li>
         </ul>
       </nav>
@@ -42,7 +38,7 @@
       <form id="formVuelos">
         <table>
           <thead>
-            <td><label>Vuelos a México</label></td>
+            <td><label>Vuelos en México</label></td>
             <tr>
               <th>Origen</th>
               <th>Destino</th>
@@ -54,31 +50,21 @@
           <tbody>
             <tr>
               <td>
-                <input
-                  type="search"
-                  id="buscarOrigen"
-                  name=""
-                  placeholder="Origen"
-                />
+                <input type="search" id="buscarOrigen" placeholder="Origen" />
                 <ul id="listaOrigen"></ul>
               </td>
               <td>
-                <input
-                  type="search"
-                  name=""
-                  id="buscarDestino"
-                  placeholder="Destino"
-                />
+                <input type="search" id="buscarDestino" placeholder="Destino" />
                 <ul id="listaDestino"></ul>
               </td>
               <td>
-                <input type="date" name="" id="" placeholder="Fecha" />
+                <input type="date" id="" placeholder="Fecha" />
               </td>
               <td>
-                <input type="date" name="" id="" placeholder="Regreso" />
+                <input type="date" id="" placeholder="Regreso" />
               </td>
               <td>
-                <input type="submit" name="" id="" value="Buscar" />
+                <input type="submit" id="" value="Buscar" />
               </td>
             </tr>
           </tbody>
@@ -100,11 +86,7 @@
         </p>
       </section>
     </div>
-
-    <script
-      type="module"
-      src="../../../js/clients/home/client_user.js"
-    ></script>
+    <script type="module" src="../../../js/clients/home/user.js"></script>
     <script
       type="module"
       src="../../../js/components/search/search_flights.js"
