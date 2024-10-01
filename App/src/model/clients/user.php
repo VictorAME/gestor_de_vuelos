@@ -65,7 +65,7 @@ final class Usuarios_API {
             $pass = $this->passwordHash($data["password"]);
 
             $stmt = $this->conn->prepare("INSERT INTO gestor_vuelos.client (name, lastname, phone, email_u, password, role_id) 
-            VALUES (:name, :lastname, :phone, :email, :password, 2);");
+            VALUES (:name, :lastname, :phone, :email, :password, 1);");
 
             $stmt->bindParam(":name", $name, PDO::PARAM_STR);
             $stmt->bindParam(":lastname", $lastname, PDO::PARAM_STR);
@@ -88,11 +88,11 @@ final class Usuarios_API {
         }
     }
 
-    public function delete($id):string {
+    public function delete($id):void {
         try {
-            if (empty($id)) {
+            if (!isset($id["usuario_id"])) {
                 echo json_encode(["warning" => "El ID no está pasando o no es válido."]);
-                exit();
+                exit;
             }
             
             $stmt = $this->conn->prepare("DELETE FROM gestor_vuelos.client WHERE user_id = :usuario_id;");
@@ -102,11 +102,11 @@ final class Usuarios_API {
                 http_response_code(400);
                 $response = $stmt->errorInfo();
                 echo json_encode(["message" => $response[2]]);
-                exit();
+                exit;
             }
 
             http_response_code(200); 
-            return json_encode(["message" => "User delete"]);
+            echo json_encode(["message" => "User delete"]);
         } catch (PDOException $error) {
             http_response_code(500);
             echo json_encode(["message" => $error->getMessage()]);

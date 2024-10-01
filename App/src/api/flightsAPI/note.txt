@@ -1,0 +1,129 @@
+<?php 
+require __DIR__."../../../config/connection.php";
+require __DIR__."../../../../../index.php";
+
+$input = file_get_contents("php://input");
+$data = json_decode($input, true);
+
+$api_key = $_ENV["ENV_API_KEY"];
+
+class FlightsAPi 
+{
+    private $conn;
+    
+    public function __construct($conn)
+    {
+        $this->conn = $conn;
+    }
+
+    public function getId($id):array
+    {
+        try {
+            if(!isset($id["id"])) {
+                http_response_code(400);
+                echo json_encode(["message" => "The ID not found"]);
+                exit;
+            }
+
+            $stmt = $this->conn->prepare("SELECT * FROM gestor_vuelos.flights WHERE fa_flight_id = :id");
+            $stmt->bindParam(":id", $id["id"], PDO::PARAM_INT);
+
+            if(!$stmt->execute()) {
+                http_response_code(400);
+                $response = $stmt->errorInfo();
+                echo json_encode(["message" => $response[2]]);
+                exit;
+            }
+
+            $flight = $stmt->fetch();
+
+            http_response_code(200);
+            return ["message" => $flight];
+        } catch(PDOException $error) {
+            http_response_code(500);
+            echo json_encode(["message" => $error->getMessage()]);
+        }
+    }
+
+    public function getAll():array
+    {
+        try
+        {
+            $stmt = $this->conn->prepare("SELECT * FROM gestor_vuelos.flights;");
+
+            if(!$stmt->execute()) {
+                http_response_code(400);
+                $response = $stmt->errorInfo();
+                echo json_encode(["message" => $response[2]]);
+                exit;
+            }
+
+            http_response_code(200);
+            return $stmt->fetchAll();
+        }
+        catch(PDOException $error)
+        {
+            http_response_code(500);
+            echo json_encode(["message" => $error->getMessage()]);
+        }
+    }
+
+    public function insert($data):string
+    {
+        try
+        {
+            if(!isset($data[""])) {
+                http_response_code(400);
+                echo json_encode(["message" => "The paramts not found"]);
+                exit;
+            }
+
+            $stmt = $this->conn->prepare("");
+            $stmt->bindParam();
+
+            if( !$stmt->execute() ) {
+                http_response_code(400);
+                $response = $stmt->errorInfo();
+                echo json_encode(["message" => $response[2]]);
+                exit;
+            }
+
+            http_response_code(201);
+            return json_encode(["message" => "Data insert accessfull"]);
+        }
+        catch(PDOException $error)
+        {
+            http_response_code(500);
+        }
+    }
+
+    public function update():string
+    {
+        try
+        {
+            http_response_code(200);
+            return json_encode(["message" => "Data updating accessfull"]);
+        }
+        catch(PDOException $error)
+        {
+            http_response_code(500);
+            echo json_encode(["message" => $error->getMessage()]);
+        }
+    }
+
+    public function delete():string
+    {
+        try
+        {
+            http_response_code(200);
+            return json_encode(["message" => "Data delete accessfull"]);
+        }
+        catch(PDOException $error)
+        {
+            http_response_code(500);
+            echo json_encode(["message" => $error->getMessage()]);
+        }
+    }
+}
+
+// Condicionales HTTP:

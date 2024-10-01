@@ -2,29 +2,22 @@ console.log("Estas conectado al archivo Js Home");
 
 function HomeAdmin() {
   const showAllVuelos = async () => {
-    try {
-      const set = await fetch(
-        "http://localhost/mvc/app/src/model/travel/flights.php",
-        {
-          method: "GET",
-        }
-      );
-      if (!set.ok) {
-        throw new Error("Error en la conexión.");
+    return await fetch(
+      "http://localhost/mvc/app/src/model/travel/flights.php",
+      {
+        method: "GET",
       }
-
-      const data = await set.json();
-      return data;
-    } catch (error) {
-      console.error("Error en la solicitud:", error);
-      return { items: [] };
-    }
+    )
+      .then((response) => response.json())
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const deleteVuelos = async (id) => {
     try {
       const deleteVuelo = await fetch(
-        `http://localhost/mvc/App/model/api/admin/vuelos.php?vuelo_id=${id}`,
+        `http://localhost/mvc/app/src/model/travel/flights.php${id}`,
         {
           method: "DELETE",
         }
@@ -44,7 +37,7 @@ function HomeAdmin() {
   const updateVuelos = async (id) => {
     try {
       const deleteVuelo = await fetch(
-        `http://localhost/mvc/App/model/api/admin/vuelos.php?vuelo_id=${id}`,
+        `http://localhost/mvc/app/src/model/travel/flights.php${id}`,
         {
           method: "PUT",
         }
@@ -98,17 +91,13 @@ function HomeAdmin() {
     //###################################################################
     const trHead = document.createElement("tr");
 
-    const thUsuario = document.createElement("th");
-    thUsuario.textContent = "Usuario";
-    trHead.appendChild(thUsuario);
+    const thOrigen = document.createElement("th");
+    thOrigen.textContent = "Origen";
+    trHead.appendChild(thOrigen);
 
     const thdestino = document.createElement("th");
     thdestino.textContent = "Destino";
     trHead.appendChild(thdestino);
-
-    const thOrigen = document.createElement("th");
-    thOrigen.textContent = "Origen";
-    trHead.appendChild(thOrigen);
 
     const thFechaIda = document.createElement("th");
     thFechaIda.textContent = "Fecha de Ida";
@@ -142,32 +131,31 @@ function HomeAdmin() {
     items.forEach((item) => {
       const tr = document.createElement("tr");
 
-      const tdUsuarioId = document.createElement("td");
-      tdUsuarioId.textContent = item.usuario;
-      tr.appendChild(tdUsuarioId);
+      // const tdUsuarioId = document.createElement("td");
+      // tdUsuarioId.textContent = item.usuario;
+      // tr.appendChild(tdUsuarioId);
+      const tdOrigen = document.createElement("td");
+      tdOrigen.textContent = item.origen;
+      tr.appendChild(tdOrigen);
 
       const tdDestino = document.createElement("td");
       tdDestino.textContent = item.destino;
       tr.appendChild(tdDestino);
 
-      const tdOrigen = document.createElement("td");
-      tdOrigen.textContent = item.origen;
-      tr.appendChild(tdOrigen);
-
       const tdFechaIda = document.createElement("td");
-      tdFechaIda.textContent = item.fechaIda;
+      tdFechaIda.textContent = item.F_salida;
       tr.appendChild(tdFechaIda);
 
       const tdFechaRegreso = document.createElement("td");
-      tdFechaRegreso.textContent = item.fechaRegreso;
+      tdFechaRegreso.textContent = item.F_regreso;
       tr.appendChild(tdFechaRegreso);
 
       const tdHoraSalida = document.createElement("td");
-      tdHoraSalida.textContent = item.horaSalida;
+      tdHoraSalida.textContent = item.H_salida;
       tr.appendChild(tdHoraSalida);
 
       const tdHoraLlegada = document.createElement("td");
-      tdHoraLlegada.textContent = item.horaLlegada;
+      tdHoraLlegada.textContent = item.H_llegada;
       tr.appendChild(tdHoraLlegada);
 
       const tdPrecio = document.createElement("td");
@@ -176,7 +164,7 @@ function HomeAdmin() {
 
       // Boton de ELIMINAR:
       const imgDelete = document.createElement("img");
-      imgDelete.src = "../../../../img/admin/usuario_iconos/basura.png";
+      imgDelete.src = "../../../img/basura.png";
       imgDelete.alt = "Eliminar";
 
       const tdDelete = document.createElement("button");
@@ -192,7 +180,7 @@ function HomeAdmin() {
 
       // Boton de ACTUALIZAR:
       const imgUpdate = document.createElement("img");
-      imgUpdate.src = "../../../../img/admin/usuario_iconos/lapiz.png";
+      imgUpdate.src = "../../../img/contrato.png";
       imgUpdate.alt = "Actualizar";
 
       const tdUpdate = document.createElement("button");

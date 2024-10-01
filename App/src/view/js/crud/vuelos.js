@@ -2,35 +2,33 @@ console.log("Estoy conectado al Js de Vuelos");
 
 function VuelosAPI() {
   const create = async (data) => {
-    try {
-      const set = await fetch(
-        "http://localhost/mvc/app/src/model/travel/flights.php",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
-      if (!set.ok) {
-        // Cambiar `response.ok` a `set.ok`
-        throw new Error("Error en la conexión.");
+    return await fetch(
+      "http://localhost/mvc/app/src/model/travel/flights.php",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error en la conexion: " + response.statusText);
+        }
 
-      const response = await set.json(); // Cambiar `response.json()` a `set.json()`
-      return response;
-    } catch (error) {
-      console.error("Error en la solicitud:", error);
-    }
+        return response.json();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const usuario = document.getElementById("usuario").value;
-    const destino = document.getElementById("destino").value;
     const origen = document.getElementById("origen").value;
+    const destino = document.getElementById("destino").value;
     const fechaIda = document.getElementById("fechaIda").value;
     const fechaRegreso = document.getElementById("fechaRegreso").value;
     const horaSalida = document.getElementById("horaSalida").value;
@@ -38,9 +36,8 @@ function VuelosAPI() {
     const precio = document.getElementById("precio").value;
 
     const data = {
-      usuario: usuario,
-      destino: destino,
       origen: origen,
+      destino: destino,
       fechaIda: fechaIda,
       fechaRegreso: fechaRegreso,
       horaSalida: horaSalida,
@@ -52,7 +49,7 @@ function VuelosAPI() {
 
     const response = await create(data);
 
-    if (response && response.message === "Datos insertados con exito") {
+    if (response && response.message === "Datos insertados") {
       alert("Datos insertados con exito");
     } else {
       console.error("Error");

@@ -68,13 +68,11 @@ const LongIn = () => {
     const client = await getClient();
     const items = client.items || [];
 
-    items.forEach((item) => {
-      if (response && response.message === "Welcome User") {
-        location.href = "../../../html/clients/home/client_user_home.html";
-      } else if (response && response.message === "Welcome Admin") {
-        location.href = "../../../html/clients/home/client_admin_home.html";
-      }
-    });
+    if (response && response.message === "Welcome User") {
+      location.href = "../../../html/clients/home/client_user_home.html";
+    } else if (response && response.message === "Welcome Admin") {
+      location.href = "../../../html/clients/home/client_admin_home.html";
+    }
   };
 
   const form = document.getElementById("loginForm");

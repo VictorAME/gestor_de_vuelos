@@ -21,13 +21,13 @@
       <nav>
         <ul>
           <li>
-            <a href="../home/home.html">Inicio</a>
+            <a href="../clients/home/client_admin_home.html">Menu</a>
           </li>
           <li>
-            <a href="../hoteles/hoteles.html">Hoteles</a>
+            <a href="#">Hoteles</a>
           </li>
           <li>
-            <a href="../usuarios/usuarios.html">Usuarios</a>
+            <a href="../manage_users/manage_users.html">Administrar Usuarios</a>
           </li>
         </ul>
       </nav>
@@ -43,8 +43,8 @@
                 <input
                   type="text"
                   name=""
-                  id="usuario"
-                  placeholder="usuario id"
+                  id="origen"
+                  placeholder="origen"
                   required
                 />
               </td>
@@ -63,21 +63,10 @@
             <tr>
               <td>
                 <input
-                  type="text"
-                  name=""
-                  id="origen"
-                  placeholder="origen"
-                  required
-                />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <input
-                  type="text"
+                  type="date"
                   name=""
                   id="fechaIda"
-                  placeholder="Fecha de ida"
+                  placeholder="Fecha de salida"
                   required
                 />
               </td>
@@ -85,7 +74,7 @@
             <tr>
               <td>
                 <input
-                  type="text"
+                  type="date"
                   name=""
                   id="fechaRegreso"
                   placeholder="Fecha de regreso"
@@ -96,7 +85,7 @@
             <tr>
               <td>
                 <input
-                  type="text"
+                  type="time"
                   name=""
                   id="horaSalida"
                   placeholder="Hora de salida"
@@ -107,7 +96,7 @@
             <tr>
               <td>
                 <input
-                  type="text"
+                  type="time"
                   name=""
                   id="horaLlegada"
                   placeholder="Hora de llagada"
@@ -118,7 +107,7 @@
             <tr>
               <td>
                 <input
-                  type="text"
+                  type="number"
                   name=""
                   id="precio"
                   placeholder="precio"
@@ -141,7 +130,6 @@
         </table>
       </form>
     </div>
-
-    <script type="module" src="../../js/crud/crud_vuelos.js"></script>
+    <script type="module" src="../../js/crud/vuelos.js"></script>
   </body>
 </html>

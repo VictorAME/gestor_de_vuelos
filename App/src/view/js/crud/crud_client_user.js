@@ -1,4 +1,4 @@
-console.log("Estoy conectado al JS");
+console.log("Estoy conectado al JS de crud_user");
 
 function Usuarios() {
   const endpoint = async () => {
@@ -25,7 +25,7 @@ function Usuarios() {
   const deleteUser = async (id) => {
     try {
       await fetch(
-        `http://localhost/mvc/App/model/api/usuarios.php?usuario_id=${id}`,
+        `http://localhost/mvc/App/src/model/clients/user.php?usuario_id=${id}`,
         {
           method: "DELETE",
         }
@@ -54,7 +54,7 @@ function Usuarios() {
   const updateUser = async (id) => {
     try {
       await fetch(
-        `http://localhost/mvc/App/model/api/usuarios.php?usuario_id=${id}`,
+        `http://localhost/mvc/App/src/model/clients/user.php?usuario_id=${id}`,
         {
           method: "PUT",
         }
@@ -115,7 +115,7 @@ function Usuarios() {
       ####################################################
       */
       const imgDelete = document.createElement("img");
-      imgDelete.src = "../../img/admin/usuario_iconos/basura.png";
+      imgDelete.src = "../../img/basura.png";
       imgDelete.alt = "Eliminar"; // Texto alternativo para la accesibilidad
 
       const tdDelete = document.createElement("button");
@@ -137,7 +137,7 @@ function Usuarios() {
       ####################################################
       */
       const imgUpdate = document.createElement("img");
-      imgUpdate.src = "../../img/admin/usuario_iconos/lapiz.png";
+      imgUpdate.src = "../../img/contrato.png";
       imgUpdate.alt = "Actualizar"; // Texto alternativo para la accesibilidad
 
       const tdUpdate = document.createElement("button");
